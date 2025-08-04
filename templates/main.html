@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV Charging Station</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header>
+        <img src="images/1.jpeg" alt="EV Charging" class="header-image">
+        <h1>Welcome to EV Charging Station</h1>
+        <nav>
+            <ul>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><button id="find-stations">Find Charging Stations</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="services">
+            <h2>Our Services</h2>
+            <p>We provide fast and reliable EV charging solutions.</p>
+            <ul>
+                <li>Fast Charging Stations</li>
+                <li>Home Charging Solutions</li>
+                <li>Mobile Charging Services</li>
+            </ul>
+        </section>
+
+        <section id="about">
+            <h2>About Us</h2>
+            <p>We are dedicated to promoting electric vehicle usage by providing accessible charging solutions.</p>
+            <img src="images/ev-charging.jpg" alt="EV Charging" class="responsive-image">
+        </section>
+
+        <section id="map">
+            <h2>Find Charging Stations</h2>
+            <div id="map-container"></div>
+            <div id="available-slots">
+                <h3>Available Slots</h3>
+                <p>Slot 1: Available</p>
+                <p>Slot 2: Available</p>
+                <p>Slot 3: Not Available</p>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Contact Us</h2>
+            <p>Email: info@evcharging.com</p>
+            <p>Phone: (123) 456-7890</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 EV Charging Station. All rights reserved.</p>
+    </footer>
+</body>
+</html>

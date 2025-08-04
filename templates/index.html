@@ -1,0 +1,413 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}EV Spot - Find Your Perfect Charging Station{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold text-white mb-4">
+                    Find Your Perfect <span class="text-warning">Charging Station</span>
+                </h1>
+                <p class="lead text-white mb-4">
+                    Discover nearby EV charging stations, check availability, and start charging with ease. 
+                    Join thousands of EV drivers who trust EV Spot for their charging needs.
+                </p>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-warning btn-lg" onclick="scrollToMap()">
+                        <i class="fas fa-map-marker-alt me-2"></i>Find Stations
+                    </button>
+                    <button class="btn btn-outline-light btn-lg" data-bs-toggle="modal" data-bs-target="#registerModal">
+                        <i class="fas fa-user-plus me-2"></i>Get Started
+                    </button>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img src="{% static 'images/hero-ev.jpg' %}" alt="EV Charging" class="img-fluid rounded shadow" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div style="display: none; background: #f8f9fa; border-radius: 8px; padding: 2rem; text-align: center;">
+                    <i class="fas fa-charging-station fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">EV Charging Station</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold mb-3">Why Choose EV Spot?</h2>
+                <p class="lead text-muted">Everything you need for seamless EV charging</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-map-marked-alt text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Real-time Location</h5>
+                        <p class="card-text">Find charging stations near you with precise GPS coordinates and real-time availability updates.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-bolt text-warning"></i>
+                        </div>
+                        <h5 class="card-title">Fast Charging</h5>
+                        <p class="card-text">Access to high-speed charging stations with various power outputs to suit your vehicle's needs.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-mobile-alt text-success"></i>
+                        </div>
+                        <h5 class="card-title">Mobile App</h5>
+                        <p class="card-text">Manage your charging sessions, track costs, and save favorite stations all from your mobile device.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section id="map-section" class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <h2 class="mb-4">Find Charging Stations</h2>
+                <div id="map" class="map-container rounded shadow"></div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-search me-2"></i>Search Options</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="searchRadius" class="form-label">Search Radius (km)</label>
+                            <input type="range" class="form-range" id="searchRadius" min="1" max="50" value="10">
+                            <div class="d-flex justify-content-between">
+                                <small>1km</small>
+                                <small id="radiusValue">10km</small>
+                                <small>50km</small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Charging Type</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="slow" id="slowCharging" checked>
+                                <label class="form-check-label" for="slowCharging">Slow Charging</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="fast" id="fastCharging" checked>
+                                <label class="form-check-label" for="fastCharging">Fast Charging</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="super" id="superCharging" checked>
+                                <label class="form-check-label" for="superCharging">Super Fast Charging</label>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary w-100" onclick="findNearbyStations()">
+                            <i class="fas fa-search me-2"></i>Find Stations
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card border-0 shadow-sm mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Nearby Stations</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="stationsList" class="stations-list">
+                            <p class="text-muted text-center">Click "Find Stations" to see nearby charging stations</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about-section" class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="display-5 fw-bold mb-4">About EV Spot</h2>
+                <p class="lead mb-4">
+                    EV Spot is your comprehensive solution for finding and managing electric vehicle charging stations. 
+                    We're committed to making EV ownership more convenient and accessible for everyone.
+                </p>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span>Real-time availability</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span>Multiple charging types</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span>User reviews & ratings</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span>Cost tracking</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img src="{% static 'images/about-ev.jpg' %}" alt="About EV Spot" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <h3 class="display-4 fw-bold" id="totalStations">0</h3>
+                    <p class="mb-0">Charging Stations</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <h3 class="display-4 fw-bold" id="totalUsers">0</h3>
+                    <p class="mb-0">Happy Users</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <h3 class="display-4 fw-bold" id="totalSessions">0</h3>
+                    <p class="mb-0">Charging Sessions</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <h3 class="display-4 fw-bold" id="avgRating">0</h3>
+                    <p class="mb-0">Average Rating</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize map
+    let map;
+    let markers = [];
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        initMap();
+        loadStats();
+    });
+    
+    function initMap() {
+        map = L.map('map').setView([37.7749, -122.4194], 13);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        // Get user location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                map.setView([lat, lng], 13);
+                
+                // Add user location marker
+                L.marker([lat, lng])
+                    .addTo(map)
+                    .bindPopup('Your Location')
+                    .openPopup();
+            });
+        }
+    }
+    
+    function scrollToMap() {
+        document.getElementById('map-section').scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function findNearbyStations() {
+        const radius = document.getElementById('searchRadius').value;
+        
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                
+                // Clear existing markers
+                markers.forEach(marker => map.removeLayer(marker));
+                markers = [];
+                
+                // Fetch nearby stations from API
+                fetch('/api/stations/nearby/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        latitude: lat,
+                        longitude: lng,
+                        radius: parseInt(radius)
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    displayStations(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Show sample data for demo
+                    displaySampleStations();
+                });
+            });
+        }
+    }
+    
+    function displayStations(stations) {
+        const stationsList = document.getElementById('stationsList');
+        stationsList.innerHTML = '';
+        
+        if (stations.length === 0) {
+            stationsList.innerHTML = '<p class="text-muted text-center">No stations found in this area</p>';
+            return;
+        }
+        
+        stations.forEach(station => {
+            // Add marker to map
+            const marker = L.marker([station.latitude, station.longitude])
+                .addTo(map)
+                .bindPopup(`
+                    <strong>${station.name}</strong><br>
+                    ${station.address}<br>
+                    Type: ${station.charging_type}<br>
+                    Price: $${station.price_per_kwh}/kWh<br>
+                    Available: ${station.available_ports}/${station.total_ports}
+                `);
+            markers.push(marker);
+            
+            // Add to list
+            const stationCard = document.createElement('div');
+            stationCard.className = 'station-card mb-3 p-3 border rounded';
+            stationCard.innerHTML = `
+                <h6 class="mb-1">${station.name}</h6>
+                <p class="text-muted small mb-2">${station.address}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="badge bg-primary">${station.charging_type}</span>
+                    <span class="text-success">$${station.price_per_kwh}/kWh</span>
+                </div>
+                <div class="mt-2">
+                    <small class="text-muted">Available: ${station.available_ports}/${station.total_ports}</small>
+                </div>
+            `;
+            stationsList.appendChild(stationCard);
+        });
+    }
+    
+    function displaySampleStations() {
+        const sampleStations = [
+            {
+                name: "Downtown EV Station",
+                address: "123 Main St, Downtown",
+                charging_type: "fast",
+                price_per_kwh: "0.35",
+                available_ports: 2,
+                total_ports: 4,
+                latitude: 37.7749,
+                longitude: -122.4194
+            },
+            {
+                name: "Mall Parking Garage",
+                address: "456 Shopping Ave",
+                charging_type: "super",
+                price_per_kwh: "0.45",
+                available_ports: 1,
+                total_ports: 2,
+                latitude: 37.7849,
+                longitude: -122.4094
+            }
+        ];
+        
+        displayStations(sampleStations);
+    }
+    
+    function loadStats() {
+        // Load statistics from API
+        fetch('/api/stations/')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('totalStations').textContent = data.count || 25;
+                document.getElementById('totalUsers').textContent = '1,234';
+                document.getElementById('totalSessions').textContent = '5,678';
+                document.getElementById('avgRating').textContent = '4.8';
+            })
+            .catch(error => {
+                console.error('Error loading stats:', error);
+                // Set default values
+                document.getElementById('totalStations').textContent = '25';
+                document.getElementById('totalUsers').textContent = '1,234';
+                document.getElementById('totalSessions').textContent = '5,678';
+                document.getElementById('avgRating').textContent = '4.8';
+            });
+    }
+    
+    // Update radius display
+    document.getElementById('searchRadius').addEventListener('input', function() {
+        document.getElementById('radiusValue').textContent = this.value + 'km';
+    });
+    
+    // Get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %} 
